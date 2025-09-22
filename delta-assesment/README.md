@@ -5,7 +5,7 @@ It demonstrates role-based access, dynamic form creation, drag-and-drop reorderi
 
 ---
 
-##  Application Flow (End-to-End)
+##  Application Flow 
 
 ### 1. Login & Role Selection
 - On load, user chooses a **role** (`Admin` or `User`) from a dropdown.
