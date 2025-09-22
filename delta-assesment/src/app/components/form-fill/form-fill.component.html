@@ -1,0 +1,32 @@
+<div style="max-width:900px;margin:0 auto">
+  <h2>Fill: {{template.name}}</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="template">
+    <div *ngFor="let f of template.fields" style="border:1px solid #eee;padding:8px;margin:8px 0">
+      <label>{{f.label}} <span *ngIf="f.required">*</span></label>
+      <div [ngSwitch]="f.type">
+        <input *ngSwitchCase="'text'" [formControlName]="f.id" />
+        <textarea *ngSwitchCase="'textarea'" [formControlName]="f.id"></textarea>
+        <select *ngSwitchCase="'dropdown'" [formControlName]="f.id"><option value="">--select--</option><option *ngFor="let o of f.options" [value]="o">{{o}}</option></select>
+        <div *ngSwitchCase="'checkbox'">
+          <label *ngFor="let o of f.options; let i=index"><input type="checkbox" [formControl]="getCheckboxControl(f.id,i)" /> {{o}}</label>
+        </div>
+        <div *ngSwitchCase="'radio'">
+          <label *ngFor="let o of f.options"><input type="radio" [formControlName]="f.id" [value]="o" /> {{o}}</label>
+        </div>
+        <input *ngSwitchCase="'date'" type="date" [formControlName]="f.id" />
+      </div>
+
+      <div style="color:red" *ngIf="form.get(f.id)?.invalid && (form.get(f.id)?.touched || form.get(f.id)?.dirty)">
+        <div *ngIf="form.get(f.id)?.errors?.['required']">Required</div>
+        <div *ngIf="form.get(f.id)?.errors?.['minlength']">Min length</div>
+        <div *ngIf="form.get(f.id)?.errors?.['maxlength']">Max length</div>
+        <div *ngIf="form.get(f.id)?.errors?.['pattern']">Pattern mismatch</div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <button type="submit" [disabled]="submitting">Submit</button>
+      <span style="margin-left:8px">{{message}}</span>
+    </div>
+  </form>
+</div>

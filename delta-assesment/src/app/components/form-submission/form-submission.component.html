@@ -1,0 +1,8 @@
+<div style="max-width:900px;margin:0 auto">
+  <h2>Submissions</h2>
+  <div *ngIf="submissions.length===0">No submissions</div>
+  <div *ngFor="let s of submissions" style="border:1px solid #eee;padding:8px;margin:8px 0">
+    <div><strong>At:</strong> {{s.submittedAt | date:'short'}}</div>
+    <pre>{{s.data | json}}</pre>
+  </div>
+</div>

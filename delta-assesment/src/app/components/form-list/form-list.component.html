@@ -1,0 +1,21 @@
+<div style="max-width:900px;margin:0 auto">
+  <header style="display:flex;justify-content:space-between;align-items:center">
+    <h2>Available Forms</h2>
+    <div><button *ngIf="isAdmin()" (click)="goBuild()">Create Form</button></div>
+  </header>
+
+  <div *ngIf="(forms$ | async)?.length === 0" style="margin-top:8px">No forms yet.</div>
+
+  <ul style="list-style:none;padding:0">
+    <li *ngFor="let f of forms$ | async" style="display:flex;justify-content:space-between;padding:8px;border:1px solid #eee;margin:8px 0">
+      <div><strong>{{f.name}}</strong><div style="color:#666">{{f.fields.length}} fields</div></div>
+      <div style="display:flex;gap:6px">
+        <button (click)="preview(f.id)">Preview</button>
+        <button (click)="fill(f.id)">Fill</button>
+        <button *ngIf="isAdmin()" (click)="submissions(f.id)">Submissions</button>
+        <button *ngIf="isAdmin()" (click)="edit(f.id)">Edit</button>
+        <button *ngIf="isAdmin()" (click)="remove(f.id)">Delete</button>
+      </div>
+    </li>
+  </ul>
+</div>

@@ -1,1 +1,8 @@
-<p>login works!</p>
+<div style="max-width:320px;margin:24px auto;padding:12px;border:1px solid #eee">
+  <h3>Login</h3>
+  <label for="role">Select role</label>
+  <select id="role" [(ngModel)]="role" name="role">
+    <option *ngFor="let r of roles" [value]="r">{{r}}</option>
+  </select>
+  <div style="margin-top:8px"><button (click)="submit()">Enter</button></div>
+</div>

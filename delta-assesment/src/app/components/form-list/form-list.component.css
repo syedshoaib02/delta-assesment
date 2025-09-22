@@ -1,0 +1,13 @@
+.list-container {
+  max-width: 700px;
+  margin: auto;
+}
+.form-card {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin: 8px 0;
+}
+.form-card button {
+  margin-right: 5px;
+  margin-top: 5px;
+}

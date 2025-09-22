@@ -1,0 +1,101 @@
+<div style="max-width: 900px; margin: 0 auto">
+  <button type="button" (click)="togglePreview()">
+    {{ previewMode ? "Edit Mode" : "Preview Mode" }}
+  </button>
+  <h2>{{ editingId ? "Edit Form" : "Create Form" }}</h2>
+
+  <form *ngIf="!previewMode" [formGroup]="form" (ngSubmit)="save()">
+    <label>Form name</label>
+    <input formControlName="name" />
+    <div *ngIf="form.get('name')?.touched && form.get('name')?.invalid" style="color:red; font-size:12px">
+      Form name is required
+    </div>
+
+    <div style="margin-top: 8px">
+      <button *ngIf="canEdit()" type="button" (click)="addField('text')">+Text</button>
+      <button *ngIf="canEdit()" type="button" (click)="addField('textarea')">+Textarea</button>
+      <button *ngIf="canEdit()" type="button" (click)="addField('dropdown')">+Select</button>
+      <button *ngIf="canEdit()" type="button" (click)="addField('checkbox')">+Checkbox</button>
+      <button *ngIf="canEdit()" type="button" (click)="addField('radio')">+Radio</button>
+      <button *ngIf="canEdit()" type="button" (click)="addField('date')">+Date</button>
+    </div>
+
+    <div formArrayName="fields">
+      <div cdkDropList [cdkDropListData]="fields.controls" (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let f of fields.controls; let i=index" [formGroupName]="i" cdkDrag class="field-card">
+
+          <!-- Field Header -->
+          <div style="display:flex; gap:8px; align-items:center">
+            <strong>{{ i + 1 }}.</strong>
+            <input formControlName="label" placeholder="Label" style="flex:1" />
+            <select formControlName="type">
+              <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+            </select>
+            <label><input type="checkbox" formControlName="required" /> required</label>
+            <button *ngIf="canEdit()" type="button" (click)="removeField(i)">Delete</button>
+          </div>
+
+          <!-- Help Text -->
+          <div style="margin-top:8px">
+            <label>Help text</label>
+            <input formControlName="helpText" />
+          </div>
+
+          <!-- Options -->
+          <div *ngIf="['dropdown','checkbox','radio'].includes(f.get('type')?.value)">
+            <div formArrayName="options" style="margin-top:8px">
+              <div *ngFor="let opt of getOptions(i); let j=index" style="display:flex; gap:8px; align-items:center; margin-bottom:6px">
+                <input [formControl]="opt" />
+                <button *ngIf="canEdit()" type="button" (click)="removeOption(i,j)">x</button>
+              </div>
+              <button *ngIf="canEdit()" type="button" (click)="addOption(i)">+ Add option</button>
+            </div>
+          </div>
+
+          <!-- Date Picker -->
+          <div *ngIf="f.get('type')?.value === 'date'" style="margin-top:8px">
+            <label>Select Date</label>
+            <input type="date" [formControlName]="'helpText'" /> <!-- Can use a dedicated control if you want -->
+          </div>
+
+          <!-- Inline Validations -->
+          <div style="margin-top:6px; color:red; font-size:12px">
+            <!-- Required -->
+            <span *ngIf="f.get('required')?.value && f.get('label')?.touched && !f.get('label')?.value">
+              This field is required
+            </span>
+
+            <!-- Min Length -->
+            <span *ngIf="f.get('validations')?.get('minLength')?.value && f.get('label')?.value?.length < f.get('validations')?.get('minLength')?.value">
+              Minimum length: {{ f.get('validations')?.get('minLength')?.value }}
+            </span>
+
+            <!-- Max Length -->
+            <span *ngIf="f.get('validations')?.get('maxLength')?.value && f.get('label')?.value?.length > f.get('validations')?.get('maxLength')?.value">
+              Maximum length: {{ f.get('validations')?.get('maxLength')?.value }}
+            </span>
+
+            <!-- Pattern -->
+          <span *ngIf="f.get('validations')?.get('pattern')?.value && f.get('label')?.value && !checkPattern(f.get('label')?.value, f.get('validations')?.get('pattern')?.value)">
+  Invalid pattern
+</span>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <button *ngIf="canEdit()" type="submit">{{ editingId ? "Update" : "Save" }}</button>
+    </div>
+  </form>
+
+  <!-- Preview Mode -->
+  <div *ngIf="previewMode" style="margin-top:12px; border:1px solid #ccc; padding:10px;">
+    <h3>Preview Mode</h3>
+    <div *ngFor="let f of fields.controls; let i=index">
+      <p><strong>{{ f.get('label')?.value }}</strong> ({{ f.get('type')?.value }})</p>
+    </div>
+  </div>
+</div>

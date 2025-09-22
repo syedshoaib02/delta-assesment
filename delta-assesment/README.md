@@ -1,59 +1,106 @@
-# DeltaAssesment
+# Delta Assesment Angular Dynamic Form Builder
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.0.
+This project is a **Dynamic Form Builder** built with Angular.  
+It demonstrates role-based access, dynamic form creation, drag-and-drop reordering, and form submission with a mock API.
 
-## Development server
+---
 
-To start a local development server, run:
+##  Application Flow (End-to-End)
 
-```bash
-ng serve
-```
+### 1. Login & Role Selection
+- On load, user chooses a **role** (`Admin` or `User`) from a dropdown.
+- Role is stored in **localStorage** and enforced with `AuthGuard`.
+  - **Admin** → access to Form Builder (create, edit, manage forms).  
+  - **User** → access only to Form Viewer (view and fill forms).
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### 2. Dashboard
+- Shows all available forms.
+- Admins see **"Create Form"** button in addition to the list.
+- Users only see the form list.
 
-## Code scaffolding
+### 3. Create Form (Admin)
+- Admin clicks **Create Form** → taken to builder.
+- Builder has:
+  - **Form Name input**
+  - Toolbar with field types: `Text`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Date`.
+- Clicking a button adds a new field.
+  - Example: click **Text** twice → two text fields added.
+- Each field can be reordered with **drag & drop**.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 4. Field Configuration
+- Every field supports:
+  - Label  
+  - Required toggle  
+  - Help text  
+  - Validation rules (min/max length, regex)  
+  - Options (for select, checkbox, radio)
 
-```bash
-ng generate component component-name
-```
+### 5. Drag-and-Drop
+- Admin can reorder fields via Angular CDK drag-drop.
+- Under the hood, `FormArray` is updated using `moveItemInArray` to maintain order.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 6. Preview
+- Admin clicks **Preview** to see how end users will interact with the form.
+- Preview is read-only (no editing allowed).
 
-```bash
-ng generate --help
-```
+### 7. Save Form
+- Admin clicks **Save**.
+- Form definition (name, fields, validations, order) is stored via a **mock API service**.
+- The form now appears in the **dashboard list**.
 
-## Building
+### 8. User View & Submit
+- A User logs in with role = `User`.
+- User sees the list of available forms.
+- User opens a form, fills it, and submits.
+- Submission is sent to the mock API.
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+##  Technical Approach
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+1. **Reactive Forms**
+   - Used `FormGroup` + `FormArray` to dynamically build forms.
+   - Each form field is a nested `FormGroup`.
 
-## Running unit tests
+2. **Role-Based Access**
+   - `AuthService` manages role in `localStorage`.
+   - `AuthGuard` restricts routes based on role.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+3. **Drag & Drop**
+   - Implemented with Angular CDK (`CdkDropList`, `CdkDrag`).
+   - Keeps form field order synced with `FormArray`.
 
-```bash
-ng test
-```
+4. **Mock API**
+   - Simulates backend storage of forms and submissions.
+   - Provides `getForms()`, `saveForm()`, and `submitForm()`.
 
-## Running end-to-end tests
+5. **NgRx Store (if included)**
+   - Centralized state for forms and authentication.
 
-For end-to-end (e2e) testing, run:
+6. **Testing**
+   - Unit tests for:
+     - `FormBuilderComponent`
+     - `formfillcomponent`
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+##  Why This Approach?
 
-## Additional Resources
+- **Reactive Forms** → Flexible, scalable for dynamic form creation.  
+- **FormArray with nested FormGroups** → Perfect for handling multiple dynamic fields.  
+- **Angular CDK drag-drop** → Native, no external dependency, easy to maintain.  
+- **Role-based Auth with Guards** → Clean separation of Admin and User features.  
+- **Mock API service** → Keeps solution self-contained, no backend setup needed.  
+- **Preview mode** → Improves UX, ensures correctness before saving.  
+- **NgRx (optional)** → State consistency across components.  
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This approach ensures:
+- Separation of concerns (Auth, Builder, Viewer).
+- Maintainability for future enhancements (new field types, real API).
+- Clear Admin vs User workflows.
+
+---
+
+##  How to Run
+
+  -ng serve

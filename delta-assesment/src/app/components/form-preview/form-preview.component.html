@@ -1,0 +1,7 @@
+<div style="max-width:900px;margin:0 auto">
+  <h2>Preview: {{template?.name}}</h2>
+  <div *ngFor="let f of template?.fields" style="margin:6px 0">
+    <strong>{{f.label}}</strong> <span *ngIf="f.required">*</span>
+    <div style="color:#666;margin-top:2px">{{f.helpText}}</div>
+  </div>
+</div>
